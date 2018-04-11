@@ -11,12 +11,13 @@ function tm -d "Switch tmux session"
     if count $argv > /dev/null
         set session "$argv[1]"
     else
-        if set session (
-            tmux list-sessions -F "#{session_name}" \
-            2>/dev/null \
-            | fzf --exit-0)
+        eval "tmux list-sessions -F \"#{session_name}\" \
+        2>/dev/null \
+        | fzf --exit-0" | read -l session
 
-            tmux $change -t "$session"
+        if test -n $session
+
+            tmux $change -t "$session"; return 1
         else
             echo "No sessions found."
             return 1
